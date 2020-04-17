@@ -1,4 +1,9 @@
+import logging
 import os
+
+
+logger = logging.getLogger(__name__)
+
 
 def load_repo(path):
     """
@@ -10,15 +15,69 @@ def load_repo(path):
     from leapp.utils.repository import find_repository_basedir
     from leapp.repository.scan import find_and_scan_repositories
 
-    repo = find_and_scan_repositories(find_repository_basedir(path), include_locals=True)
+    repo = find_and_scan_repositories(
+        find_repository_basedir(path), include_locals=True
+    )
     repo.load()
     return repo
-        
+
+
+def pytest_collectstart(collector):
+    if collector.nodeid:
+        if not hasattr(collector.session, "leapp_repository"):
+            repo = load_repo(collector.nodeid)
+            collector.session.leapp_repository = repo
+
+        actor = None
+        # find which actor is being tested
+        for a in collector.session.leapp_repository.actors:
+            if a.full_path == collector.fspath.dirpath().dirname:
+                actor = a
+                break
+
+        if not actor:
+            logger.info("No actor found, exiting collection...")
+            return
+
+        # load actor context so libraries can be imported on module level
+
+        logger.info(
+            "Injecting actor context for {}".format(repr(actor.class_name))
+        )
+        collector.actor_context = actor.injected_context()
+        collector.actor_context.__enter__()
+        logger.info("Actor context injected")
+
+
+#
+# def pytest_itemcollected(item):
+#     item
+#
+# def pytest_internalerror(excrepr, excinfo):
+#     excrepr, excinfo
+#
+# def pytest_exception_interact(node, call, report):
+#     node, call, report
+#
+# def pytest_collection_modifyitems(session, config, items):
+#     session, config, items
+#
+# def pytest_pycollect_makemodule(path, parent):
+#     path, parent
+#
+#
+# def pytest_pycollect_makeitem(collector, name, obj):
+#     collector
+#
+# def pytest_generate_tests(metafunc):
+#     metafunc
+#
+
 
 def pytest_sessionstart(session):
 
-    actor_path = os.environ.get('LEAPP_TESTED_ACTOR', None)
-    library_path = os.environ.get('LEAPP_TESTED_LIBRARY', None)
+    actor_path = os.environ.get("LEAPP_TESTED_ACTOR", None)
+    library_path = os.environ.get("LEAPP_TESTED_LIBRARY", None)
 
     if actor_path:
         repo = load_repo(actor_path)
@@ -26,7 +85,7 @@ def pytest_sessionstart(session):
         actor = None
         # find which actor is being tested
         for a in repo.actors:
-            if a.full_path == actor_path.rstrip('/'):
+            if a.full_path == actor_path.rstrip("/"):
                 actor = a
                 break
 
