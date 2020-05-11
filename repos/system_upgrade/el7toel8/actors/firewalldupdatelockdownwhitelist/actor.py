@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ElementTree
 
 from leapp.actors import Actor
-from leapp.libraries.actor import private
+from leapp.libraries.actor import firewalldupdatelockdownwhitelist
 from leapp.models import FirewalldFacts
 from leapp.tags import ApplicationsPhaseTag, IPUWorkflowTag
 
@@ -26,10 +26,14 @@ class FirewalldUpdateLockdownWhitelist(Actor):
     def process(self):
         for facts in self.consume(FirewalldFacts):
             if facts.firewall_config_command:
-                tree = ElementTree.parse('/etc/firewalld/lockdown-whitelist.xml')
+                tree = ElementTree.parse(
+                    '/etc/firewalld/lockdown-whitelist.xml'
+                )
                 root = tree.getroot()
 
-                need_write = private.updateFirewallConfigCommand(root, facts.firewall_config_command)
+                need_write = firewalldupdatelockdownwhitelist.updateFirewallConfigCommand(
+                    root, facts.firewall_config_command
+                )
 
                 if need_write:
                     tree.write('/etc/firewalld/lockdown-whitelist.xml')

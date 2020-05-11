@@ -1,4 +1,8 @@
-from leapp.libraries.actor.library import read_nm_config, parse_nm_config, check_nm_dhcp
+from leapp.libraries.actor.networkmanagerreadconfig import (
+    read_nm_config,
+    parse_nm_config,
+    check_nm_dhcp,
+)
 from leapp.actors import Actor
 from leapp.models import NetworkManagerConfig
 from leapp.tags import IPUWorkflowTag, FactsPhaseTag
@@ -14,7 +18,10 @@ class NetworkManagerReadConfig(Actor):
     name = 'network_manager_read_config'
     consumes = ()
     produces = (NetworkManagerConfig,)
-    tags = (IPUWorkflowTag, FactsPhaseTag,)
+    tags = (
+        IPUWorkflowTag,
+        FactsPhaseTag,
+    )
 
     def process(self):
         nm_config = NetworkManagerConfig()

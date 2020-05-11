@@ -35,6 +35,7 @@ def get_spamd_ssl_version(read_func):
     except (IOError, OSError) as e:
         if e.errno != errno.ENOENT:
             api.current_logger().warning(
-                'Failed to read spamassassin sysconfig file: %s' % e)
+                'Failed to read spamassassin sysconfig file: %s' % e
+            )
         return None
     return _parse_ssl_version(content)

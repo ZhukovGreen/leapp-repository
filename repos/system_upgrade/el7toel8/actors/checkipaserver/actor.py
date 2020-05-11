@@ -1,5 +1,5 @@
 from leapp.actors import Actor
-from leapp.libraries.actor.library import (
+from leapp.libraries.actor.checkipaserver import (
     ipa_inhibit_upgrade,
     ipa_warn_pkg_installed,
 )
@@ -21,9 +21,7 @@ class CheckIPAServer(Actor):
     def process(self):
         for ipainfo in self.consume(IpaInfo):
             if ipainfo.is_server_configured:
-                self.log.error(
-                    "IdM server instance detected, inhibit upgrade"
-                )
+                self.log.error("IdM server instance detected, inhibit upgrade")
                 ipa_inhibit_upgrade(ipainfo)
             elif ipainfo.has_server_package:
                 self.log.info("Unused ipa-server package detected")

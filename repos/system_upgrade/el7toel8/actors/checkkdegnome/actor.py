@@ -7,7 +7,7 @@ Email: jaberan@redhat.com
 from leapp.actors import Actor
 from leapp.reporting import Report
 from leapp.tags import IPUWorkflowTag, ChecksPhaseTag
-from leapp.libraries.actor.library import check_kde_gnome
+from leapp.libraries.actor.checkkdegnome import check_kde_gnome
 from leapp.models import InstalledDesktopsFacts, InstalledKdeAppsFacts
 
 
@@ -22,6 +22,7 @@ class CheckKdeGnome(Actor):
     Note: The Package Evolution Service data makes sure the KDE-related packages are removed in the
     dnf upgrade transaction.
     """
+
     name = 'check_kde_gnome'
     consumes = (InstalledDesktopsFacts, InstalledKdeAppsFacts)
     produces = (Report,)

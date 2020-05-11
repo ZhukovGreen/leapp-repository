@@ -1,12 +1,12 @@
 import pytest
 
-from leapp.libraries.actor.library import update_sane, NEW_QUIRKS
+from leapp.libraries.actor.sanebackendsmigrate import update_sane, NEW_QUIRKS
 
 
 testdata = [
     {'sane-backends': '/etc/sane.d/canon_dr.conf'},
     {'sane-backends': ''},
-    {'ble': ''}
+    {'ble': ''},
 ]
 
 
@@ -82,18 +82,30 @@ class ExpectedOutput(object):
 
         if found:
             for sane_config in NEW_QUIRKS.keys():
-                self.debugmsg += ('Updating SANE configuration file {}.'
-                                  .format(sane_config))
+                self.debugmsg += 'Updating SANE configuration file {}.'.format(
+                    sane_config
+                )
                 if config == '' or config != sane_config:
-                    error_list.append((sane_config,
-                                       'Error during writing to file: {}.'
-                                       .format(sane_config)))
+                    error_list.append(
+                        (
+                            sane_config,
+                            'Error during writing to file: {}.'.format(
+                                sane_config
+                            ),
+                        )
+                    )
 
         if error_list:
-            self.errmsg = ('The files below have not been modified '
-                           '(error message included):' +
-                           ''.join(['\n    - {}: {}'.format(err[0], err[1])
-                                   for err in error_list]))
+            self.errmsg = (
+                'The files below have not been modified '
+                '(error message included):'
+                + ''.join(
+                    [
+                        '\n    - {}: {}'.format(err[0], err[1])
+                        for err in error_list
+                    ]
+                )
+            )
 
 
 @pytest.mark.parametrize("rpms", testdata)
@@ -106,11 +118,13 @@ def test_actor_check_report(rpms):
     expected = ExpectedOutput()
     expected.create(rpms)
 
-    update_sane(logger.debug,
-                logger.error,
-                installed_packages.is_installed,
-                installed_packages.append_content,
-                installed_packages.check_content)
+    update_sane(
+        logger.debug,
+        logger.error,
+        installed_packages.is_installed,
+        installed_packages.append_content,
+        installed_packages.check_content,
+    )
 
     assert expected.debugmsg == logger.debugmsg
     assert expected.errmsg == logger.errmsg

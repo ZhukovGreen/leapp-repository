@@ -1,7 +1,7 @@
 from collections import namedtuple
 
 from leapp import reporting
-from leapp.libraries.actor import library
+from leapp.libraries.actor import checkinstalledkernels
 from leapp.libraries.common.config import architecture
 from leapp.libraries.common.testutils import (
     CurrentActorMocked,
@@ -50,14 +50,14 @@ def test_single_kernel_s390x(monkeypatch):
     monkeypatch.setattr(api, 'current_logger', logger_mocked())
     monkeypatch.setattr(api, 'consume', mocked_consume(s390x_pkgs_single))
     monkeypatch.setattr(reporting, 'create_report', create_report_mocked())
-    library.process()
+    checkinstalledkernels.process()
     assert not reporting.create_report.called
 
     monkeypatch.setattr(
         api, 'current_actor', CurrentActorMocked(arch=architecture.ARCH_S390X)
     )
     monkeypatch.setattr(api, 'consume', mocked_consume(s390x_pkgs_single))
-    library.process()
+    checkinstalledkernels.process()
     assert not reporting.create_report.called
 
 
@@ -66,14 +66,14 @@ def test_multi_kernel_s390x(monkeypatch):
     monkeypatch.setattr(api, 'current_logger', logger_mocked())
     monkeypatch.setattr(api, 'consume', mocked_consume(s390x_pkgs_multi))
     monkeypatch.setattr(reporting, 'create_report', create_report_mocked())
-    library.process()
+    checkinstalledkernels.process()
     assert not reporting.create_report.called
 
     monkeypatch.setattr(
         api, 'current_actor', CurrentActorMocked(arch=architecture.ARCH_S390X)
     )
     monkeypatch.setattr(api, 'consume', mocked_consume(s390x_pkgs_multi))
-    library.process()
+    checkinstalledkernels.process()
     assert reporting.create_report.called
     assert (
         reporting.create_report.report_fields['title']
@@ -93,7 +93,7 @@ def test_newest_kernel(monkeypatch):
     monkeypatch.setattr(api, 'current_logger', logger_mocked())
     monkeypatch.setattr(api, 'consume', mocked_consume(versioned_kernel_pkgs))
     monkeypatch.setattr(reporting, 'create_report', create_report_mocked())
-    library.process()
+    checkinstalledkernels.process()
     assert not reporting.create_report.called
 
     monkeypatch.setattr(
@@ -104,7 +104,7 @@ def test_newest_kernel(monkeypatch):
     monkeypatch.setattr(api, 'current_logger', logger_mocked())
     monkeypatch.setattr(api, 'consume', mocked_consume(versioned_kernel_pkgs))
     monkeypatch.setattr(reporting, 'create_report', create_report_mocked())
-    library.process()
+    checkinstalledkernels.process()
     assert reporting.create_report.called
     assert (
         reporting.create_report.report_fields['title']
@@ -119,7 +119,7 @@ def test_newest_kernel(monkeypatch):
     monkeypatch.setattr(api, 'current_logger', logger_mocked())
     monkeypatch.setattr(api, 'consume', mocked_consume(versioned_kernel_pkgs))
     monkeypatch.setattr(reporting, 'create_report', create_report_mocked())
-    library.process()
+    checkinstalledkernels.process()
     assert reporting.create_report.called
     assert (
         reporting.create_report.report_fields['title']

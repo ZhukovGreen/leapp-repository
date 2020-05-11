@@ -2,7 +2,7 @@ import textwrap
 
 from six import StringIO
 
-from leapp.libraries.actor.library import SSSDFactsLibrary
+from leapp.libraries.actor.sssdcheck import SSSDFactsLibrary
 from leapp.libraries.common import utils
 from leapp.models import SSSDConfig, SSSDDomainConfig
 
@@ -20,10 +20,12 @@ def test_empty_config():
 
 
 def test_local_domain():
-    config = get_config("""
+    config = get_config(
+        """
     [domain/local]
     id_provider = local
-    """)
+    """
+    )
 
     facts = SSSDFactsLibrary(config).process()
 
@@ -34,14 +36,16 @@ def test_local_domain():
 
 
 def test_groups_chain():
-    config = get_config("""
+    config = get_config(
+        """
     [domain/ldap]
     id_provider = ldap
     ldap_groups_use_matching_rule_in_chain = True
 
     # Set this option to avoid reporting its change
     ldap_sudo_include_regexp = True
-    """)
+    """
+    )
 
     facts = SSSDFactsLibrary(config).process()
 
@@ -52,14 +56,16 @@ def test_groups_chain():
 
 
 def test_initgroups_chain():
-    config = get_config("""
+    config = get_config(
+        """
     [domain/ldap]
     id_provider = ldap
     ldap_initgroups_use_matching_rule_in_chain = True
 
     # Set this option to avoid reporting its change
     ldap_sudo_include_regexp = True
-    """)
+    """
+    )
 
     facts = SSSDFactsLibrary(config).process()
 
@@ -70,10 +76,12 @@ def test_initgroups_chain():
 
 
 def test_sudo_regexp__ldap():
-    config = get_config("""
+    config = get_config(
+        """
     [domain/ldap]
     id_provider = ldap
-    """)
+    """
+    )
 
     facts = SSSDFactsLibrary(config).process()
 
@@ -84,10 +92,12 @@ def test_sudo_regexp__ldap():
 
 
 def test_sudo_regexp__ad():
-    config = get_config("""
+    config = get_config(
+        """
     [domain/ad]
     id_provider = ad
-    """)
+    """
+    )
 
     facts = SSSDFactsLibrary(config).process()
 
@@ -98,10 +108,12 @@ def test_sudo_regexp__ad():
 
 
 def test_sudo_regexp__ipa():
-    config = get_config("""
+    config = get_config(
+        """
     [domain/ipa]
     id_provider = ipa
-    """)
+    """
+    )
 
     facts = SSSDFactsLibrary(config).process()
 
@@ -111,7 +123,8 @@ def test_sudo_regexp__ipa():
 
 
 def test_complex():
-    config = get_config("""
+    config = get_config(
+        """
     [sssd]
     user = root
     services = nss, pam, sudo
@@ -125,7 +138,8 @@ def test_complex():
 
     [domain/ipa]
     id_provider = ipa
-    """)
+    """
+    )
 
     facts = SSSDFactsLibrary(config).process()
 
@@ -152,29 +166,38 @@ def test_get_domain_section():
 
 
 def test_get_provider__none():
-    config = get_config("""
+    config = get_config(
+        """
     [domain/local]
-    """)
+    """
+    )
     library = SSSDFactsLibrary(config)
 
     assert library.get_provider("local", "id_provider") is None
 
 
 def test_get_provider__without_fallback():
-    config = get_config("""
+    config = get_config(
+        """
     [domain/local]
     id_provider = local
-    """)
+    """
+    )
     library = SSSDFactsLibrary(config)
 
     assert library.get_provider("local", "id_provider") == "local"
 
 
 def test_get_provider__with_fallback():
-    config = get_config("""
+    config = get_config(
+        """
     [domain/ldap]
     id_provider = ldap
-    """)
+    """
+    )
     library = SSSDFactsLibrary(config)
 
-    assert library.get_provider("ldap", "sudo_provider", ["id_provider"]) == "ldap"
+    assert (
+        library.get_provider("ldap", "sudo_provider", ["id_provider"])
+        == "ldap"
+    )

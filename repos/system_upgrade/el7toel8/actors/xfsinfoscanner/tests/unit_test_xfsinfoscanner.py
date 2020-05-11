@@ -1,10 +1,16 @@
 import pytest
 
 from leapp.exceptions import StopActorExecutionError
-from leapp.libraries.actor import library
+from leapp.libraries.actor import xfsinfoscanner
 from leapp.libraries.common.testutils import produce_mocked
 from leapp.libraries.stdlib import api
-from leapp.models import StorageInfo, FstabEntry, MountEntry, SystemdMountEntry, XFSPresence
+from leapp.models import (
+    StorageInfo,
+    FstabEntry,
+    MountEntry,
+    SystemdMountEntry,
+    XFSPresence,
+)
 
 
 class run_mocked(object):
@@ -16,27 +22,33 @@ class run_mocked(object):
         self.called += 1
         self.args = args
 
-        with_ftype = {'stdout': [
-            "meta-data=/dev/loop0             isize=512    agcount=4, agsize=131072 blks",
-            "         =                       sectsz=512   attr=2, projid32bit=1",
-            "         =                       crc=1        finobt=0 spinodes=0",
-            "data     =                       bsize=4096   blocks=524288, imaxpct=25",
-            "         =                       sunit=0      swidth=0 blks",
-            "naming   =version 2              bsize=4096   ascii-ci=0 ftype=1",
-            "log      =internal               bsize=4096   blocks=2560, version=2",
-            "         =                       sectsz=512   sunit=0 blks, lazy-count=1",
-            "realtime =none                   extsz=4096   blocks=0, rtextents=0"]}
+        with_ftype = {
+            'stdout': [
+                "meta-data=/dev/loop0             isize=512    agcount=4, agsize=131072 blks",
+                "         =                       sectsz=512   attr=2, projid32bit=1",
+                "         =                       crc=1        finobt=0 spinodes=0",
+                "data     =                       bsize=4096   blocks=524288, imaxpct=25",
+                "         =                       sunit=0      swidth=0 blks",
+                "naming   =version 2              bsize=4096   ascii-ci=0 ftype=1",
+                "log      =internal               bsize=4096   blocks=2560, version=2",
+                "         =                       sectsz=512   sunit=0 blks, lazy-count=1",
+                "realtime =none                   extsz=4096   blocks=0, rtextents=0",
+            ]
+        }
 
-        without_ftype = {'stdout': [
-            "meta-data=/dev/loop0             isize=512    agcount=4, agsize=131072 blks",
-            "         =                       sectsz=512   attr=2, projid32bit=1",
-            "         =                       crc=1        finobt=0 spinodes=0",
-            "data     =                       bsize=4096   blocks=524288, imaxpct=25",
-            "         =                       sunit=0      swidth=0 blks",
-            "naming   =version 2              bsize=4096   ascii-ci=0 ftype=0",
-            "log      =internal               bsize=4096   blocks=2560, version=2",
-            "         =                       sectsz=512   sunit=0 blks, lazy-count=1",
-            "realtime =none                   extsz=4096   blocks=0, rtextents=0"]}
+        without_ftype = {
+            'stdout': [
+                "meta-data=/dev/loop0             isize=512    agcount=4, agsize=131072 blks",
+                "         =                       sectsz=512   attr=2, projid32bit=1",
+                "         =                       crc=1        finobt=0 spinodes=0",
+                "data     =                       bsize=4096   blocks=524288, imaxpct=25",
+                "         =                       sunit=0      swidth=0 blks",
+                "naming   =version 2              bsize=4096   ascii-ci=0 ftype=0",
+                "log      =internal               bsize=4096   blocks=2560, version=2",
+                "         =                       sectsz=512   sunit=0 blks, lazy-count=1",
+                "realtime =none                   extsz=4096   blocks=0, rtextents=0",
+            ]
+        }
 
         if "/var" in self.args:
             return without_ftype
@@ -51,9 +63,12 @@ def test_scan_xfs_fstab(monkeypatch):
         "fs_vfstype": "ext4",
         "fs_mntops": "defaults,x-systemd.device-timeout=0",
         "fs_freq": "1",
-        "fs_passno": "2"}
+        "fs_passno": "2",
+    }
 
-    mountpoints = library.scan_xfs_fstab([FstabEntry(**fstab_data_no_xfs)])
+    mountpoints = xfsinfoscanner.scan_xfs_fstab(
+        [FstabEntry(**fstab_data_no_xfs)]
+    )
     assert not mountpoints
 
     fstab_data_xfs = {
@@ -62,9 +77,10 @@ def test_scan_xfs_fstab(monkeypatch):
         "fs_vfstype": "xfs",
         "fs_mntops": "defaults",
         "fs_freq": "0",
-        "fs_passno": "0"}
+        "fs_passno": "0",
+    }
 
-    mountpoints = library.scan_xfs_fstab([FstabEntry(**fstab_data_xfs)])
+    mountpoints = xfsinfoscanner.scan_xfs_fstab([FstabEntry(**fstab_data_xfs)])
     assert mountpoints == {"/"}
 
 
@@ -73,18 +89,22 @@ def test_scan_xfs_mount(monkeypatch):
         "name": "tmpfs",
         "mount": "/run/snapd/ns",
         "tp": "tmpfs",
-        "options": "rw,nosuid,nodev,seclabel,mode=755"}
+        "options": "rw,nosuid,nodev,seclabel,mode=755",
+    }
 
-    mountpoints = library.scan_xfs_mount([MountEntry(**mount_data_no_xfs)])
+    mountpoints = xfsinfoscanner.scan_xfs_mount(
+        [MountEntry(**mount_data_no_xfs)]
+    )
     assert not mountpoints
 
     mount_data_xfs = {
         "name": "/dev/vda1",
         "mount": "/boot",
         "tp": "xfs",
-        "options": "rw,relatime,seclabel,attr2,inode64,noquota"}
+        "options": "rw,relatime,seclabel,attr2,inode64,noquota",
+    }
 
-    mountpoints = library.scan_xfs_mount([MountEntry(**mount_data_xfs)])
+    mountpoints = xfsinfoscanner.scan_xfs_mount([MountEntry(**mount_data_xfs)])
     assert mountpoints == {"/boot"}
 
 
@@ -96,9 +116,12 @@ def test_scan_xfs_systemdmount(monkeypatch):
         "wwn": "0x500080d9108e8753",
         "fs_type": "ext4",
         "label": "n/a",
-        "uuid": "5675d309-eff7-4eb1-9c27-58bc5880ec72"}
+        "uuid": "5675d309-eff7-4eb1-9c27-58bc5880ec72",
+    }
 
-    mountpoints = library.scan_xfs_systemdmount([SystemdMountEntry(**systemdmount_data_no_xfs)])
+    mountpoints = xfsinfoscanner.scan_xfs_systemdmount(
+        [SystemdMountEntry(**systemdmount_data_no_xfs)]
+    )
     assert not mountpoints
 
     systemdmount_data_xfs = {
@@ -108,31 +131,35 @@ def test_scan_xfs_systemdmount(monkeypatch):
         "wwn": "n/a",
         "fs_type": "xfs",
         "label": "n/a",
-        "uuid": "n/a"}
+        "uuid": "n/a",
+    }
 
-    mountpoints = library.scan_xfs_systemdmount([SystemdMountEntry(**systemdmount_data_xfs)])
+    mountpoints = xfsinfoscanner.scan_xfs_systemdmount(
+        [SystemdMountEntry(**systemdmount_data_xfs)]
+    )
     assert mountpoints == {"/var"}
 
 
 def test_is_xfs_without_ftype(monkeypatch):
-    monkeypatch.setattr(library, "run", run_mocked())
+    monkeypatch.setattr(xfsinfoscanner, "run", run_mocked())
 
-    assert library.is_xfs_without_ftype("/var")
-    assert ' '.join(library.run.args) == "/usr/sbin/xfs_info /var"
+    assert xfsinfoscanner.is_xfs_without_ftype("/var")
+    assert ' '.join(xfsinfoscanner.run.args) == "/usr/sbin/xfs_info /var"
 
-    assert not library.is_xfs_without_ftype("/boot")
-    assert ' '.join(library.run.args) == "/usr/sbin/xfs_info /boot"
+    assert not xfsinfoscanner.is_xfs_without_ftype("/boot")
+    assert ' '.join(xfsinfoscanner.run.args) == "/usr/sbin/xfs_info /boot"
 
 
 def test_scan_xfs(monkeypatch):
-    monkeypatch.setattr(library, "run", run_mocked())
+    monkeypatch.setattr(xfsinfoscanner, "run", run_mocked())
 
     def consume_no_xfs_message_mocked(*models):
         yield StorageInfo()
+
     monkeypatch.setattr(api, "consume", consume_no_xfs_message_mocked)
     monkeypatch.setattr(api, "produce", produce_mocked())
 
-    library.scan_xfs()
+    xfsinfoscanner.scan_xfs()
     assert api.produce.called == 1
     assert len(api.produce.model_instances) == 1
     assert isinstance(api.produce.model_instances[0], XFSPresence)
@@ -145,12 +172,14 @@ def test_scan_xfs(monkeypatch):
             "name": "/dev/vda1",
             "mount": "/boot",
             "tp": "xfs",
-            "options": "rw,relatime,seclabel,attr2,inode64,noquota"}
+            "options": "rw,relatime,seclabel,attr2,inode64,noquota",
+        }
         yield StorageInfo(mount=[MountEntry(**mount_data)])
+
     monkeypatch.setattr(api, "consume", consume_ignored_xfs_message_mocked)
     monkeypatch.setattr(api, "produce", produce_mocked())
 
-    library.scan_xfs()
+    xfsinfoscanner.scan_xfs()
     assert api.produce.called == 1
     assert len(api.produce.model_instances) == 1
     assert isinstance(api.produce.model_instances[0], XFSPresence)
@@ -165,12 +194,14 @@ def test_scan_xfs(monkeypatch):
             "fs_vfstype": "xfs",
             "fs_mntops": "defaults",
             "fs_freq": "0",
-            "fs_passno": "0"}
+            "fs_passno": "0",
+        }
         yield StorageInfo(fstab=[FstabEntry(**fstab_data)])
+
     monkeypatch.setattr(api, "consume", consume_xfs_with_ftype_message_mocked)
     monkeypatch.setattr(api, "produce", produce_mocked())
 
-    library.scan_xfs()
+    xfsinfoscanner.scan_xfs()
     assert api.produce.called == 1
     assert len(api.produce.model_instances) == 1
     assert isinstance(api.produce.model_instances[0], XFSPresence)
@@ -185,12 +216,16 @@ def test_scan_xfs(monkeypatch):
             "fs_vfstype": "xfs",
             "fs_mntops": "defaults",
             "fs_freq": "0",
-            "fs_passno": "0"}
+            "fs_passno": "0",
+        }
         yield StorageInfo(fstab=[FstabEntry(**fstab_data)])
-    monkeypatch.setattr(api, "consume", consume_xfs_without_ftype_message_mocked)
+
+    monkeypatch.setattr(
+        api, "consume", consume_xfs_without_ftype_message_mocked
+    )
     monkeypatch.setattr(api, "produce", produce_mocked())
 
-    library.scan_xfs()
+    xfsinfoscanner.scan_xfs()
     assert api.produce.called == 1
     assert len(api.produce.model_instances) == 1
     assert isinstance(api.produce.model_instances[0], XFSPresence)
@@ -198,14 +233,17 @@ def test_scan_xfs(monkeypatch):
     assert api.produce.model_instances[0].without_ftype
     assert api.produce.model_instances[0].mountpoints_without_ftype
     assert len(api.produce.model_instances[0].mountpoints_without_ftype) == 1
-    assert api.produce.model_instances[0].mountpoints_without_ftype[0] == '/var'
+    assert (
+        api.produce.model_instances[0].mountpoints_without_ftype[0] == '/var'
+    )
 
     def consume_no_message_mocked(*models):
         yield None
+
     monkeypatch.setattr(api, "consume", consume_no_message_mocked)
     monkeypatch.setattr(api, "produce", produce_mocked())
 
-    library.scan_xfs()
+    xfsinfoscanner.scan_xfs()
     assert api.produce.called == 1
     assert len(api.produce.model_instances) == 1
     assert isinstance(api.produce.model_instances[0], XFSPresence)

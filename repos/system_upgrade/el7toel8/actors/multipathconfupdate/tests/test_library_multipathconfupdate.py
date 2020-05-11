@@ -1,4 +1,4 @@
-from leapp.libraries.actor import library
+from leapp.libraries.actor import multipathconfupdate
 from leapp.models import MultipathConfig, MultipathConfigOption
 from leapp.libraries.common import multipathutil
 
@@ -117,7 +117,7 @@ def test_configs():
              (just_exists_conf, 'tests/files/after/just_exists.conf'),
              (just_all_devs_conf, 'tests/files/after/just_all_devs.conf')]
     for config, expected_config in tests:
-        config_lines = library._update_config(config)
+        config_lines = multipathconfupdate._update_config(config)
         if config_lines is None:
             assert expected_config is None
             continue

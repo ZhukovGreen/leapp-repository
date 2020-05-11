@@ -1,5 +1,5 @@
 from leapp.reporting import Report
-from leapp.libraries.actor.library import COROSYNC_CONF_LOCATION
+from leapp.libraries.actor.checkhacluster import COROSYNC_CONF_LOCATION
 
 
 def assert_inhibits(reports, node_type):
@@ -23,8 +23,7 @@ def test_inhibits_when_cluster_node(monkeypatch, current_actor_context):
 
 def test_inhibits_when_cluster_node_no_cib(monkeypatch, current_actor_context):
     monkeypatch.setattr(
-        "os.path.isfile",
-        lambda path: path == COROSYNC_CONF_LOCATION
+        "os.path.isfile", lambda path: path == COROSYNC_CONF_LOCATION
     )
     current_actor_context.run()
     assert_inhibits(current_actor_context.consume(Report), "node")
@@ -32,8 +31,7 @@ def test_inhibits_when_cluster_node_no_cib(monkeypatch, current_actor_context):
 
 def test_inhibits_when_cluster_remote_node(monkeypatch, current_actor_context):
     monkeypatch.setattr(
-        "os.path.isfile",
-        lambda path: path != COROSYNC_CONF_LOCATION
+        "os.path.isfile", lambda path: path != COROSYNC_CONF_LOCATION
     )
     current_actor_context.run()
     assert_inhibits(current_actor_context.consume(Report), "remote node")

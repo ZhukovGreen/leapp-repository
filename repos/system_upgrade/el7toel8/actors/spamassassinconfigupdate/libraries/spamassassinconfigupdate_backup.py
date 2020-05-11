@@ -12,8 +12,9 @@ def backup_file(path):
     except OSError as e:
         if e.errno == errno.EEXIST:
             file_name = os.path.basename(backup_path)
-            fd, backup_path = tempfile.mkstemp(prefix=file_name + '.',
-                                               dir=os.path.dirname(backup_path))
+            fd, backup_path = tempfile.mkstemp(
+                prefix=file_name + '.', dir=os.path.dirname(backup_path)
+            )
         else:
             raise
     os.close(fd)

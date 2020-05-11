@@ -1,5 +1,10 @@
 from leapp.actors import Actor
-from leapp.libraries.actor.library import AuthselectScannerLibrary, Authconfig, DConf, read_file
+from leapp.libraries.actor.authselectscanner import (
+    AuthselectScannerLibrary,
+    Authconfig,
+    DConf,
+    read_file,
+)
 from leapp.libraries.common.pam import PAM
 from leapp.models import Authselect
 from leapp.tags import IPUWorkflowTag, FactsPhaseTag, ExperimentalTag
@@ -69,7 +74,7 @@ class AuthselectScanner(Actor):
         'pam_u2f',
         'pam_umask',
         'pam_unix',
-        'pam_winbind'
+        'pam_winbind',
     ]
     """
     List of PAM modules that are known by authselect.
@@ -83,8 +88,7 @@ class AuthselectScanner(Actor):
         nsswitch = read_file("/etc/nsswitch.conf")
 
         scanner = AuthselectScannerLibrary(
-            self.known_modules,
-            ac, dconf, pam, nsswitch
+            self.known_modules, ac, dconf, pam, nsswitch
         )
 
         self.produce(scanner.process())

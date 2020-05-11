@@ -1,7 +1,9 @@
 def getLockdownFirewallConfigCommand(root):
     for command in root.iter('command'):
-        if 'name' in command.attrib and \
-           '/usr/bin/firewall-config' in command.attrib['name']:
+        if (
+            'name' in command.attrib
+            and '/usr/bin/firewall-config' in command.attrib['name']
+        ):
             return command.attrib['name']
 
     return ''
@@ -10,8 +12,12 @@ def getLockdownFirewallConfigCommand(root):
 def getEbtablesTablesInUse(root):
     tables = []
     for rule in root.iter('rule'):
-        if 'ipv' in rule.attrib and rule.attrib['ipv'] == 'eb' and \
-           'table' in rule.attrib and rule.attrib['table'] not in tables:
+        if (
+            'ipv' in rule.attrib
+            and rule.attrib['ipv'] == 'eb'
+            and 'table' in rule.attrib
+            and rule.attrib['table'] not in tables
+        ):
             tables.append(rule.attrib['table'])
 
     for passthrough in root.iter('passthrough'):

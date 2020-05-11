@@ -6,7 +6,7 @@ from leapp.models import UpdateGrub
 from leapp.reporting import Report
 from leapp import reporting
 from leapp.libraries.common import testutils
-from leapp.libraries.actor import library
+from leapp.libraries.actor import updategrubcore
 from leapp.libraries.stdlib import CalledProcessError, api
 
 
@@ -18,7 +18,13 @@ def raise_call_error(args=None):
     raise CalledProcessError(
         message='A Leapp Command Error occured.',
         command=args,
-        result={'signal': None, 'exit_code': 1, 'pid': 0, 'stdout': 'fake', 'stderr': 'fake'}
+        result={
+            'signal': None,
+            'exit_code': 1,
+            'pid': 0,
+            'stdout': 'fake',
+            'stderr': 'fake',
+        },
     )
 
 
@@ -36,22 +42,32 @@ class run_mocked(object):
 
 
 def test_update_grub(monkeypatch):
-    monkeypatch.setattr(api, 'consume', lambda x: iter([UpdateGrub(grub_device='/dev/vda')]))
-    monkeypatch.setattr(reporting, "create_report", testutils.create_report_mocked())
-    monkeypatch.setattr(library, 'run', run_mocked())
-    library.update_grub_core('/dev/vda')
+    monkeypatch.setattr(
+        api, 'consume', lambda x: iter([UpdateGrub(grub_device='/dev/vda')])
+    )
+    monkeypatch.setattr(
+        reporting, "create_report", testutils.create_report_mocked()
+    )
+    monkeypatch.setattr(updategrubcore, 'run', run_mocked())
+    updategrubcore.update_grub_core('/dev/vda')
     assert reporting.create_report.called
     assert UPDATE_OK_TITLE == reporting.create_report.report_fields['title']
 
 
 def test_update_grub_failed(monkeypatch):
-    monkeypatch.setattr(api, 'consume', lambda x: iter([UpdateGrub(grub_device='/dev/vda')]))
-    monkeypatch.setattr(reporting, "create_report", testutils.create_report_mocked())
-    monkeypatch.setattr(library, 'run', run_mocked(raise_err=True))
+    monkeypatch.setattr(
+        api, 'consume', lambda x: iter([UpdateGrub(grub_device='/dev/vda')])
+    )
+    monkeypatch.setattr(
+        reporting, "create_report", testutils.create_report_mocked()
+    )
+    monkeypatch.setattr(updategrubcore, 'run', run_mocked(raise_err=True))
     with pytest.raises(StopActorExecution):
-        library.update_grub_core('/dev/vda')
+        updategrubcore.update_grub_core('/dev/vda')
     assert reporting.create_report.called
-    assert UPDATE_FAILED_TITLE == reporting.create_report.report_fields['title']
+    assert (
+        UPDATE_FAILED_TITLE == reporting.create_report.report_fields['title']
+    )
 
 
 def test_update_grub_negative(current_actor_context):

@@ -1,5 +1,5 @@
 from leapp.actors import Actor
-from leapp.libraries.actor.library import scan_xfs
+from leapp.libraries.actor.xfsinfoscanner import scan_xfs
 from leapp.models import StorageInfo, XFSPresence
 from leapp.tags import FactsPhaseTag, IPUWorkflowTag
 
@@ -17,7 +17,10 @@ class XFSInfoScanner(Actor):
     name = 'xfs_info_scanner'
     consumes = (StorageInfo,)
     produces = (XFSPresence,)
-    tags = (FactsPhaseTag, IPUWorkflowTag,)
+    tags = (
+        FactsPhaseTag,
+        IPUWorkflowTag,
+    )
 
     def process(self):
         scan_xfs()

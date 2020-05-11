@@ -1,45 +1,18 @@
 import pytest
 
-from leapp.libraries.actor.library import update_vim, vim_configs
+from leapp.libraries.actor.vimmigrate import update_vim, vim_configs
 
 
 packages = [
-    {
-        'vim-minimal': '/etc/virc',
-        'vim-enhanced': '/etc/vimrc'
-    },
-    {
-        'vim-minimal': '/etc/virc',
-        'vim-enhanced': ''
-    },
-    {
-        'vim-minimal': '',
-        'vim-enhanced': '/etc/vimrc'
-    },
-    {
-        'vim-minimal': '',
-        'vim-enhanced': ''
-    },
-    {
-        'vim-minimal': '/etc/virc',
-        'ble': ''
-    },
-    {
-        'vim-minimal': '',
-        'ble': ''
-    },
-    {
-        'vim-enhanced': '/etc/vimrc',
-        'moo': ''
-    },
-    {
-        'vim-enhanced': '',
-        'moo': ''
-    },
-    {
-        'you': '',
-        'hele': ''
-    }
+    {'vim-minimal': '/etc/virc', 'vim-enhanced': '/etc/vimrc'},
+    {'vim-minimal': '/etc/virc', 'vim-enhanced': ''},
+    {'vim-minimal': '', 'vim-enhanced': '/etc/vimrc'},
+    {'vim-minimal': '', 'vim-enhanced': ''},
+    {'vim-minimal': '/etc/virc', 'ble': ''},
+    {'vim-minimal': '', 'ble': ''},
+    {'vim-enhanced': '/etc/vimrc', 'moo': ''},
+    {'vim-enhanced': '', 'moo': ''},
+    {'you': '', 'hele': ''},
 ]
 
 
@@ -98,15 +71,30 @@ class ExpectedOutput(object):
 
         for pkg, config in rpms.items():
             if pkg in vim_configs.keys():
-                self.debugmsg += 'Updating Vim configuration file {}.'.format(vim_configs[pkg])
+                self.debugmsg += 'Updating Vim configuration file {}.'.format(
+                    vim_configs[pkg]
+                )
                 if config == '':
-                    error_list.append((vim_configs[pkg], 'Error during writing to file: {}.'.format(vim_configs[pkg])))
+                    error_list.append(
+                        (
+                            vim_configs[pkg],
+                            'Error during writing to file: {}.'.format(
+                                vim_configs[pkg]
+                            ),
+                        )
+                    )
 
         if error_list:
-            self.errmsg = ('The files below have not been modified '
-                           '(error message included):' +
-                           ''.join(['\n    - {}: {}'.format(err[0], err[1])
-                                   for err in error_list]))
+            self.errmsg = (
+                'The files below have not been modified '
+                '(error message included):'
+                + ''.join(
+                    [
+                        '\n    - {}: {}'.format(err[0], err[1])
+                        for err in error_list
+                    ]
+                )
+            )
 
 
 @pytest.mark.parametrize('rpms', packages)
@@ -119,10 +107,12 @@ def test_update_vim(rpms):
     expected = ExpectedOutput()
     expected.create(rpms)
 
-    update_vim(logger.debug,
-               logger.error,
-               installed_packages.is_installed,
-               installed_packages.append_content)
+    update_vim(
+        logger.debug,
+        logger.error,
+        installed_packages.is_installed,
+        installed_packages.append_content,
+    )
 
     assert expected.debugmsg == logger.debugmsg
     assert expected.errmsg == logger.errmsg

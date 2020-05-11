@@ -1,13 +1,14 @@
 import pytest
 
-from leapp.libraries.actor.library import BROWSED_CONFIG
-from leapp.libraries.actor.library import update_cups_browsed
-
+from leapp.libraries.actor.cupsfiltersmigrate import (
+    BROWSED_CONFIG,
+    update_cups_browsed,
+)
 
 testdata = [
     {'cups-filters': '/etc/cups/cups-browsed.conf'},
     {'cups-filters': ''},
-    {'ble': ''}
+    {'ble': ''},
 ]
 
 
@@ -77,16 +78,29 @@ class ExpectedOutput(object):
 
         for pkg, config in rpms.items():
             if pkg == 'cups-filters':
-                self.debugmsg += 'Updating cups-browsed configuration file {}.'.format(BROWSED_CONFIG)
+                self.debugmsg += 'Updating cups-browsed configuration file {}.'.format(
+                    BROWSED_CONFIG
+                )
                 if config == '':
-                    error_list.append((BROWSED_CONFIG, 'Error during '
-                                       'writing to file: {}.'.format(BROWSED_CONFIG)))
+                    error_list.append(
+                        (
+                            BROWSED_CONFIG,
+                            'Error during '
+                            'writing to file: {}.'.format(BROWSED_CONFIG),
+                        )
+                    )
 
         if error_list:
-            self.errmsg = ('The files below have not been modified '
-                           '(error message included):' +
-                           ''.join(['\n    - {}: {}'.format(err[0], err[1])
-                                   for err in error_list]))
+            self.errmsg = (
+                'The files below have not been modified '
+                '(error message included):'
+                + ''.join(
+                    [
+                        '\n    - {}: {}'.format(err[0], err[1])
+                        for err in error_list
+                    ]
+                )
+            )
 
 
 @pytest.mark.parametrize("rpms", testdata)
@@ -99,11 +113,13 @@ def test_update_cups_browsed(rpms):
     expected = ExpectedOutput()
     expected.create(rpms)
 
-    update_cups_browsed(logger.debug,
-                        logger.error,
-                        installed_packages.is_installed,
-                        installed_packages.append_content,
-                        installed_packages.check_content)
+    update_cups_browsed(
+        logger.debug,
+        logger.error,
+        installed_packages.is_installed,
+        installed_packages.append_content,
+        installed_packages.check_content,
+    )
 
     assert expected.debugmsg == logger.debugmsg
     assert expected.errmsg == logger.errmsg

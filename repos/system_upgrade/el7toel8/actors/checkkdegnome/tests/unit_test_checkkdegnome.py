@@ -1,16 +1,20 @@
 from leapp.snactor.fixture import current_actor_context
-from leapp.libraries.actor.library import check_kde_gnome
+from leapp.libraries.actor.checkkdegnome import check_kde_gnome
 from leapp.models import InstalledDesktopsFacts, InstalledKdeAppsFacts, Report
 
 
-no_desktop_env = InstalledDesktopsFacts(gnome_installed=False,
-                                        kde_installed=False)
-gnome_desktop_env = InstalledDesktopsFacts(gnome_installed=True,
-                                           kde_installed=False)
-KDE_desktop_env = InstalledDesktopsFacts(gnome_installed=False,
-                                         kde_installed=True)
-both_desktop_env = InstalledDesktopsFacts(gnome_installed=True,
-                                          kde_installed=True)
+no_desktop_env = InstalledDesktopsFacts(
+    gnome_installed=False, kde_installed=False
+)
+gnome_desktop_env = InstalledDesktopsFacts(
+    gnome_installed=True, kde_installed=False
+)
+KDE_desktop_env = InstalledDesktopsFacts(
+    gnome_installed=False, kde_installed=True
+)
+both_desktop_env = InstalledDesktopsFacts(
+    gnome_installed=True, kde_installed=True
+)
 
 
 no_KDE_apps = InstalledKdeAppsFacts(installed_apps=[])
@@ -45,7 +49,10 @@ def test_gnome_desktop_KDE_apps(current_actor_context):
     current_actor_context.feed(some_KDE_apps)
     current_actor_context.run()
     message = current_actor_context.consume(Report)[0]
-    assert "Upgrade can be performed, but KDE/Qt apps will be uninstalled." in message.report["title"]
+    assert (
+        "Upgrade can be performed, but KDE/Qt apps will be uninstalled."
+        in message.report["title"]
+    )
 
 
 def test_KDE_desktop_no_apps(current_actor_context):
@@ -78,7 +85,10 @@ def test_both_desktops_no_apps(current_actor_context):
     current_actor_context.feed(no_KDE_apps)
     current_actor_context.run()
     message = current_actor_context.consume(Report)[0]
-    assert "Upgrade can be performed, but KDE will be uninstalled." in message.report["title"]
+    assert (
+        "Upgrade can be performed, but KDE will be uninstalled."
+        in message.report["title"]
+    )
 
 
 def test_both_desktop_KDE_apps(current_actor_context):
@@ -90,7 +100,17 @@ def test_both_desktop_KDE_apps(current_actor_context):
     current_actor_context.run()
     messages = current_actor_context.consume(Report)
     remove_KDE_title = "Upgrade can be performed, but KDE will be uninstalled."
-    remove_apps_title = "Upgrade can be performed, but KDE/Qt apps will be uninstalled."
+    remove_apps_title = (
+        "Upgrade can be performed, but KDE/Qt apps will be uninstalled."
+    )
     assert len(messages) == 2
-    assert [True for message in messages if remove_KDE_title in message.report["title"]]
-    assert [True for message in messages if remove_apps_title in message.report["title"]]
+    assert [
+        True
+        for message in messages
+        if remove_KDE_title in message.report["title"]
+    ]
+    assert [
+        True
+        for message in messages
+        if remove_apps_title in message.report["title"]
+    ]

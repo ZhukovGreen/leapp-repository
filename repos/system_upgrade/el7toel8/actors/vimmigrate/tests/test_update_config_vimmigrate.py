@@ -1,7 +1,6 @@
 import pytest
 
-from leapp.libraries.actor.library import new_macros
-from leapp.libraries.actor.library import update_config
+from leapp.libraries.actor.vimmigrate import new_macros, update_config
 
 
 class MockFile(object):
@@ -32,8 +31,9 @@ def test_update_config_file_errors(path='foo'):
 def test_update_config_append_into_file(content):
     path = 'bar'
 
-    fmt_input = "\n{comment_line}\n{content}\n".format(comment_line='" content added by Leapp',
-                                                       content='\n'.join(new_macros))
+    fmt_input = "\n{comment_line}\n{content}\n".format(
+        comment_line='" content added by Leapp', content='\n'.join(new_macros)
+    )
 
     f = MockFile(path, content)
     res = update_config(path, f.append)

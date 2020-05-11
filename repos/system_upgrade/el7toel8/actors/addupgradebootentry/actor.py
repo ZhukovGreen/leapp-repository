@@ -1,5 +1,8 @@
 from leapp.actors import Actor
-from leapp.libraries.actor.library import add_boot_entry, fix_grub_config_error
+from leapp.libraries.actor.addupgradebootentry import (
+    add_boot_entry,
+    fix_grub_config_error,
+)
 from leapp.models import BootContent, GrubConfigError
 from leapp.tags import InterimPreparationPhaseTag, IPUWorkflowTag
 
@@ -17,7 +20,9 @@ class AddUpgradeBootEntry(Actor):
     tags = (IPUWorkflowTag, InterimPreparationPhaseTag)
 
     def process(self):
-        grub_config_error_detected = next(self.consume(GrubConfigError), GrubConfigError()).error_detected
+        grub_config_error_detected = next(
+            self.consume(GrubConfigError), GrubConfigError()
+        ).error_detected
         if grub_config_error_detected:
             fix_grub_config_error('/etc/default/grub')
 

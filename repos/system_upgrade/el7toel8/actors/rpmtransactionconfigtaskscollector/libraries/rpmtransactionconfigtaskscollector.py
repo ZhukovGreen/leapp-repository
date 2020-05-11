@@ -10,11 +10,18 @@ def load_tasks_file(path, logger):
         try:
             with open(path, 'r') as f:
                 return list(
-                    {entry.strip() for entry in f.read().split('\n') if entry.strip() and
-                        not entry.strip().startswith('#')}
+                    {
+                        entry.strip()
+                        for entry in f.read().split('\n')
+                        if entry.strip() and not entry.strip().startswith('#')
+                    }
                 )
         except IOError as e:
-            logger.warn('Failed to open %s to load additional transaction data. Error: %s', path, str(e))
+            logger.warn(
+                'Failed to open %s to load additional transaction data. Error: %s',
+                path,
+                str(e),
+            )
     return []
 
 
@@ -30,9 +37,11 @@ def load_tasks(base_dir, logger):
     if filtered:
         api.current_logger().debug(
             'The following packages from "to_install" file will be ignored as they are already installed:'
-            '\n- ' + '\n- '.join(filtered))
+            '\n- ' + '\n- '.join(filtered)
+        )
 
     return RpmTransactionTasks(
         to_install=to_install_filtered,
         to_keep=load_tasks_file(os.path.join(base_dir, 'to_keep'), logger),
-        to_remove=load_tasks_file(os.path.join(base_dir, 'to_remove'), logger))
+        to_remove=load_tasks_file(os.path.join(base_dir, 'to_remove'), logger),
+    )

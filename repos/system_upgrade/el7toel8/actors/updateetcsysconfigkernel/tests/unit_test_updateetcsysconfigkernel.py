@@ -3,10 +3,12 @@ import tempfile
 
 import pytest
 
-from leapp.libraries.actor import library
+from leapp.libraries.actor import updateetcsysconfigkernel
 
 
-@pytest.mark.skip(reason='Failing on CI complaining about missing leapp.db fiel')
+@pytest.mark.skip(
+    reason='Failing on CI complaining about missing leapp.db fiel'
+)
 def test_update_kernel_config(monkeypatch):
     temp = tempfile.NamedTemporaryFile(delete=False)
     with open('tests/files/original') as f:
@@ -14,7 +16,7 @@ def test_update_kernel_config(monkeypatch):
         temp.writelines(data)
     temp.close()
 
-    library.update_kernel_config(temp.name)
+    updateetcsysconfigkernel.update_kernel_config(temp.name)
 
     with open(temp.name) as f:
         result = f.readlines()

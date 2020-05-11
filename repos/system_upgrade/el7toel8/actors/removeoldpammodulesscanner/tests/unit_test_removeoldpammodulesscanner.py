@@ -1,6 +1,8 @@
 import textwrap
 
-from leapp.libraries.actor.library import RemoveOldPAMModulesScannerLibrary
+from leapp.libraries.actor.removeoldpammodulesscanner import (
+    RemoveOldPAMModulesScannerLibrary,
+)
 from leapp.libraries.common.pam import PAM
 from leapp.models import RemovedPAMModules
 
@@ -10,12 +12,14 @@ def get_config(config):
 
 
 def test_RemoveOldPAMModulesScannerLibrary_process__pkcs11():
-    pam = get_config('''
+    pam = get_config(
+        '''
     auth sufficient pam_unix.so
     auth sufficient pam_pkcs11.so
     auth sufficient pam_sss.so
     auth required pam_deny.so
-    ''')
+    '''
+    )
 
     obj = RemoveOldPAMModulesScannerLibrary(PAM(pam))
     model = obj.process()
@@ -23,12 +27,14 @@ def test_RemoveOldPAMModulesScannerLibrary_process__pkcs11():
 
 
 def test_RemoveOldPAMModulesScannerLibrary_process__krb5():
-    pam = get_config('''
+    pam = get_config(
+        '''
     auth sufficient pam_unix.so
     auth sufficient pam_krb5.so
     auth sufficient pam_sss.so
     auth required pam_deny.so
-    ''')
+    '''
+    )
 
     obj = RemoveOldPAMModulesScannerLibrary(PAM(pam))
     model = obj.process()
@@ -36,13 +42,15 @@ def test_RemoveOldPAMModulesScannerLibrary_process__krb5():
 
 
 def test_RemoveOldPAMModulesScannerLibrary_process__all():
-    pam = get_config('''
+    pam = get_config(
+        '''
     auth sufficient pam_unix.so
     auth sufficient pam_krb5.so
     auth sufficient pam_pkcs11.so
     auth sufficient pam_sss.so
     auth required pam_deny.so
-    ''')
+    '''
+    )
 
     obj = RemoveOldPAMModulesScannerLibrary(PAM(pam))
     model = obj.process()
@@ -52,11 +60,13 @@ def test_RemoveOldPAMModulesScannerLibrary_process__all():
 
 
 def test_RemoveOldPAMModulesScannerLibrary_process__none():
-    pam = get_config('''
+    pam = get_config(
+        '''
     auth sufficient pam_unix.so
     auth sufficient pam_sss.so
     auth required pam_deny.so
-    ''')
+    '''
+    )
 
     obj = RemoveOldPAMModulesScannerLibrary(PAM(pam))
     model = obj.process()

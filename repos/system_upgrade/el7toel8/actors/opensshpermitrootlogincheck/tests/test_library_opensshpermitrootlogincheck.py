@@ -1,4 +1,4 @@
-from leapp.libraries.actor.library import semantics_changes
+from leapp.libraries.actor.opensshpermitrootlogincheck import semantics_changes
 from leapp.models import OpenSshConfig, OpenSshPermitRootLogin
 
 
@@ -8,11 +8,7 @@ def test_globally_enabled():
         PermitRootLogin yes # explicit
     """
     config = OpenSshConfig(
-        permit_root_login=[
-            OpenSshPermitRootLogin(
-                value='yes',
-                in_match=None)
-        ],
+        permit_root_login=[OpenSshPermitRootLogin(value='yes', in_match=None)],
     )
 
     assert not semantics_changes(config)
@@ -24,11 +20,7 @@ def test_globally_disabled():
         PermitRootLogin no # explicit
     """
     config = OpenSshConfig(
-        permit_root_login=[
-            OpenSshPermitRootLogin(
-                value='no',
-                in_match=None)
-        ],
+        permit_root_login=[OpenSshPermitRootLogin(value='no', in_match=None)],
     )
 
     assert not semantics_changes(config)
@@ -41,9 +33,7 @@ def test_globally_disabled_password():
     """
     config = OpenSshConfig(
         permit_root_login=[
-            OpenSshPermitRootLogin(
-                value='prohibit-password',
-                in_match=None)
+            OpenSshPermitRootLogin(value='prohibit-password', in_match=None)
         ],
     )
 
@@ -59,9 +49,7 @@ def test_in_match_disabled():
     """
     config = OpenSshConfig(
         permit_root_login=[
-            OpenSshPermitRootLogin(
-                value='no',
-                in_match=['address', '10.10.*'])
+            OpenSshPermitRootLogin(value='no', in_match=['address', '10.10.*'])
         ],
     )
 
@@ -78,8 +66,8 @@ def test_in_match_disabled_password():
     config = OpenSshConfig(
         permit_root_login=[
             OpenSshPermitRootLogin(
-                value='prohibit-password',
-                in_match=['address', '10.10.*'])
+                value='prohibit-password', in_match=['address', '10.10.*']
+            )
         ],
     )
 
@@ -97,8 +85,8 @@ def test_in_match_enabled():
     config = OpenSshConfig(
         permit_root_login=[
             OpenSshPermitRootLogin(
-                value='yes',
-                in_match=['address', '192.168.*'])
+                value='yes', in_match=['address', '192.168.*']
+            )
         ],
     )
 
@@ -114,9 +102,7 @@ def test_in_match_all_disabled():
     """
     config = OpenSshConfig(
         permit_root_login=[
-            OpenSshPermitRootLogin(
-                value='no',
-                in_match=['all'])
+            OpenSshPermitRootLogin(value='no', in_match=['all'])
         ],
     )
 
@@ -132,9 +118,7 @@ def test_in_match_all_disabled_password():
     """
     config = OpenSshConfig(
         permit_root_login=[
-            OpenSshPermitRootLogin(
-                value='prohibit-password',
-                in_match=['all'])
+            OpenSshPermitRootLogin(value='prohibit-password', in_match=['all'])
         ],
     )
 
@@ -150,9 +134,7 @@ def test_in_match_all_enabled():
     """
     config = OpenSshConfig(
         permit_root_login=[
-            OpenSshPermitRootLogin(
-                value='yes',
-                in_match=['all'])
+            OpenSshPermitRootLogin(value='yes', in_match=['all'])
         ],
     )
 
@@ -168,12 +150,8 @@ def test_in_match_enabled_globally_disabled():
     """
     config = OpenSshConfig(
         permit_root_login=[
-            OpenSshPermitRootLogin(
-                value='no',
-                in_match=None),
-            OpenSshPermitRootLogin(
-                value='yes',
-                in_match=['address', '192.*'])
+            OpenSshPermitRootLogin(value='no', in_match=None),
+            OpenSshPermitRootLogin(value='yes', in_match=['address', '192.*']),
         ],
     )
 
@@ -189,12 +167,8 @@ def test_in_match_disabled_globally_enabled():
     """
     config = OpenSshConfig(
         permit_root_login=[
-            OpenSshPermitRootLogin(
-                value='yes',
-                in_match=None),
-            OpenSshPermitRootLogin(
-                value='no',
-                in_match=['address', '192.*'])
+            OpenSshPermitRootLogin(value='yes', in_match=None),
+            OpenSshPermitRootLogin(value='no', in_match=['address', '192.*']),
         ],
     )
 

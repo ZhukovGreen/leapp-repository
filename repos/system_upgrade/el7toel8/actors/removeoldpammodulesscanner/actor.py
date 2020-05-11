@@ -1,8 +1,10 @@
 from leapp.actors import Actor
-from leapp.libraries.actor.library import RemoveOldPAMModulesScannerLibrary
+from leapp.libraries.actor.removeoldpammodulesscanner import (
+    RemoveOldPAMModulesScannerLibrary,
+)
 from leapp.libraries.common.pam import PAM
 from leapp.models import RemovedPAMModules
-from leapp.tags import IPUWorkflowTag, FactsPhaseTag, ExperimentalTag
+from leapp.tags import ExperimentalTag, FactsPhaseTag, IPUWorkflowTag
 
 
 class RemoveOldPAMModulesScanner(Actor):
@@ -13,6 +15,7 @@ class RemoveOldPAMModulesScanner(Actor):
     and must be removed from PAM configuration, otherwise it may lock out
     the system.
     """
+
     name = 'removed_pam_modules_scanner'
     consumes = ()
     produces = (RemovedPAMModules,)

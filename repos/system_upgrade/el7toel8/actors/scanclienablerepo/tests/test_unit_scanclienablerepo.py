@@ -3,7 +3,7 @@ import os
 
 import pytest
 
-from leapp.libraries.actor import library
+from leapp.libraries.actor import scanclienablerepo
 from leapp.libraries.common.config import architecture
 from leapp.libraries.common.testutils import CurrentActorMocked, produce_mocked
 from leapp.libraries.stdlib import api
@@ -30,21 +30,34 @@ def test_no_enabledrepos(monkeypatch):
     monkeypatch.setattr(api, 'produce', produce_mocked())
     monkeypatch.setattr(api, 'current_logger', LoggerMocked())
     monkeypatch.setattr(api, 'current_actor', CurrentActorMocked())
-    library.process()
+    scanclienablerepo.process()
     assert not api.current_logger.infomsg
     assert not api.produce.called
 
 
-@pytest.mark.parametrize('envars,result', [
-    ({'LEAPP_ENABLE_REPOS': 'repo1'}, [CustomTargetRepository(repoid='repo1')]),
-    ({'LEAPP_ENABLE_REPOS': 'repo1,repo2'}, [CustomTargetRepository(repoid='repo1'),
-                                             CustomTargetRepository(repoid='repo2')]),
-])
+@pytest.mark.parametrize(
+    'envars,result',
+    [
+        (
+            {'LEAPP_ENABLE_REPOS': 'repo1'},
+            [CustomTargetRepository(repoid='repo1')],
+        ),
+        (
+            {'LEAPP_ENABLE_REPOS': 'repo1,repo2'},
+            [
+                CustomTargetRepository(repoid='repo1'),
+                CustomTargetRepository(repoid='repo2'),
+            ],
+        ),
+    ],
+)
 def test_enabledrepos(monkeypatch, envars, result):
     monkeypatch.setattr(api, 'produce', produce_mocked())
     monkeypatch.setattr(api, 'current_logger', LoggerMocked())
-    monkeypatch.setattr(api, 'current_actor', CurrentActorMocked(envars=envars))
-    library.process()
+    monkeypatch.setattr(
+        api, 'current_actor', CurrentActorMocked(envars=envars)
+    )
+    scanclienablerepo.process()
     assert api.current_logger.infomsg
     assert api.produce.called == len(result)
     for i in result:

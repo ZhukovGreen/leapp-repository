@@ -14,26 +14,34 @@ def _drop_ssl_version(value):
 
 def _drop_daemonize_option(value):
     shortopts = utils.SPAMD_SHORTOPTS_NOARG
-    value = re.sub(r'(?<![\w-])-d+(?![\w-])',
-                   r'', value)
+    value = re.sub(r'(?<![\w-])-d+(?![\w-])', r'', value)
     while True:
-        value, nsubs = re.subn(r'(?<![\w-])(-[' + shortopts + ']*)d',
-                               r'\1', value)
+        value, nsubs = re.subn(
+            r'(?<![\w-])(-[' + shortopts + ']*)d', r'\1', value
+        )
         if nsubs == 0:
             break
     return re.sub(r'(?<![\w-])--daemonize(?![\w-])', '', value)
 
 
 def _rewrite_spamd_option(content, ops):
-    pre_assignment, assignment, post_assignment = \
-        utils.parse_sysconfig_spamassassin(content)
+    (
+        pre_assignment,
+        assignment,
+        post_assignment,
+    ) = utils.parse_sysconfig_spamassassin(content)
     if assignment:
-        value = re.sub(r'^\s*' + utils.SYSCONFIG_VARIABLE + r'\s*=(.*)$',
-                       r'\1', assignment)
+        value = re.sub(
+            r'^\s*' + utils.SYSCONFIG_VARIABLE + r'\s*=(.*)$',
+            r'\1',
+            assignment,
+        )
         for op in ops:
             value = op(value)
         assignment = utils.SYSCONFIG_VARIABLE + '=' + value
-    res = '\n'.join(filter(None, (pre_assignment, assignment, post_assignment)))
+    res = '\n'.join(
+        filter(None, (pre_assignment, assignment, post_assignment))
+    )
     if res and not res.endswith('\n'):
         res += '\n'
     return res
@@ -53,7 +61,9 @@ def migrate_spamd_config(facts, fileops, backup_func):
     Removes --ssl-version and -d/--daemonize options from the spamassassin
     sysconfig file. The file is backed up beforehand.
     """
-    nothing_to_migrate_msg = 'There is nothing to migrate in the spamd configuration file'
+    nothing_to_migrate_msg = (
+        'There is nothing to migrate in the spamd configuration file'
+    )
     if facts.service_overriden and not facts.spamd_ssl_version:
         api.current_logger().info(nothing_to_migrate_msg)
         return
@@ -63,21 +73,30 @@ def migrate_spamd_config(facts, fileops, backup_func):
         if e.errno == errno.ENOENT:
             api.current_logger().info(nothing_to_migrate_msg)
         else:
-            api.current_logger().warn('Failed to read spamd configuration file: %s' % e)
+            api.current_logger().warn(
+                'Failed to read spamd configuration file: %s' % e
+            )
         return
     new_content = _rewrite_spamd_config(facts, content)
     if new_content == content:
-        api.current_logger().info('There is nothing to migrate in the spamd configuration file')
+        api.current_logger().info(
+            'There is nothing to migrate in the spamd configuration file'
+        )
         return
     try:
         backup_path = backup_func(utils.SYSCONFIG_SPAMASSASSIN)
-        api.current_logger().info('spamd configuration file backup created at %s.'
-                                  % backup_path)
+        api.current_logger().info(
+            'spamd configuration file backup created at %s.' % backup_path
+        )
     except (OSError, IOError) as e:
         api.current_logger().warn(
-            'spamd configuration file migration will not be performed. Failed to create backup: %s' % e)
+            'spamd configuration file migration will not be performed. Failed to create backup: %s'
+            % e
+        )
         return
     try:
         fileops.write(utils.SYSCONFIG_SPAMASSASSIN, new_content)
     except (OSError, IOError) as e:
-        api.current_logger().warn('Failed to rewrite the spamd configuration file: %s' % e)
+        api.current_logger().warn(
+            'Failed to rewrite the spamd configuration file: %s' % e
+        )

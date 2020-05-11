@@ -1,6 +1,10 @@
 from leapp.actors import Actor
-from leapp.libraries.actor.library import process
-from leapp.models import RepositoriesBlacklisted, RepositoriesFacts, RepositoriesMap
+from leapp.libraries.actor.repositoriesblacklist import process
+from leapp.models import (
+    RepositoriesBlacklisted,
+    RepositoriesFacts,
+    RepositoriesMap,
+)
 from leapp.tags import IPUWorkflowTag, FactsPhaseTag
 
 
@@ -10,7 +14,10 @@ class RepositoriesBlacklist(Actor):
     """
 
     name = 'repositories_blacklist'
-    consumes = (RepositoriesFacts, RepositoriesMap, )
+    consumes = (
+        RepositoriesFacts,
+        RepositoriesMap,
+    )
     produces = (RepositoriesBlacklisted,)
     tags = (IPUWorkflowTag, FactsPhaseTag)
 

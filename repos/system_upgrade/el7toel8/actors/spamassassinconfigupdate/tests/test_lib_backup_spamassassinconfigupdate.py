@@ -3,7 +3,7 @@ import shutil
 import stat
 import tempfile
 
-from leapp.libraries.actor.lib_backup import backup_file
+from leapp.libraries.actor.spamassassinconfigupdate_backup import backup_file
 
 
 def test_backup_file():
@@ -45,7 +45,9 @@ def test_backup_file_target_exists():
 
         backup_path = backup_file(file_path)
 
-        assert os.path.basename(backup_path).startswith('foo-bar.leapp-backup.')
+        assert os.path.basename(backup_path).startswith(
+            'foo-bar.leapp-backup.'
+        )
         assert os.path.dirname(backup_path) == tmpdir
         assert len(os.listdir(tmpdir)) == 3
         st = os.stat(backup_path)

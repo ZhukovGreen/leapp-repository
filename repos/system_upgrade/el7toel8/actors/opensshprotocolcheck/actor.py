@@ -1,5 +1,5 @@
 from leapp.actors import Actor
-from leapp.libraries.actor import library
+from leapp.libraries.actor import opensshprotocolcheck
 from leapp.models import Report, OpenSshConfig
 from leapp.tags import ChecksPhaseTag, IPUWorkflowTag
 
@@ -14,9 +14,12 @@ class OpenSshProtocolCheck(Actor):
     """
 
     name = 'open_ssh_protocol'
-    consumes = (OpenSshConfig, )
-    produces = (Report, )
-    tags = (ChecksPhaseTag, IPUWorkflowTag, )
+    consumes = (OpenSshConfig,)
+    produces = (Report,)
+    tags = (
+        ChecksPhaseTag,
+        IPUWorkflowTag,
+    )
 
     def process(self):
-        library.process(self.consume(OpenSshConfig))
+        opensshprotocolcheck.process(self.consume(OpenSshConfig))

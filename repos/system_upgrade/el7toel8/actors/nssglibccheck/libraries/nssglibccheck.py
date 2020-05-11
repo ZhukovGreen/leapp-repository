@@ -41,14 +41,16 @@ def process_lines(lines, blacklist, config_path):
         'transaction due to issues with dynamic linking and the library load order.\n'
     )
 
-    reporting.create_report([
-        reporting.Title("Incompatible NSS configuration"),
-        reporting.Summary(summary + '\n'.join(modules)),
-        reporting.Severity(reporting.Severity.HIGH),
-        reporting.Flags([reporting.Flags.INHIBITOR]),
-        reporting.ExternalLink(
-            'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/upgrading_to_rhel_8/troubleshooting_upgrading-to-rhel-8#known-issues-upgrading-to-rhel-8',  # noqa: E501; pylint: disable=line-too-long
-            'Samba/NSS linkage problem article'
-        ),
-        reporting.RelatedResource('file', config_path)
-    ])
+    reporting.create_report(
+        [
+            reporting.Title("Incompatible NSS configuration"),
+            reporting.Summary(summary + '\n'.join(modules)),
+            reporting.Severity(reporting.Severity.HIGH),
+            reporting.Flags([reporting.Flags.INHIBITOR]),
+            reporting.ExternalLink(
+                'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/upgrading_to_rhel_8/troubleshooting_upgrading-to-rhel-8#known-issues-upgrading-to-rhel-8',  # noqa: E501; pylint: disable=line-too-long
+                'Samba/NSS linkage problem article',
+            ),
+            reporting.RelatedResource('file', config_path),
+        ]
+    )

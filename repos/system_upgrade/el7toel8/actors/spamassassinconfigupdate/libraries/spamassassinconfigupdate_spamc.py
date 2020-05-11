@@ -28,19 +28,26 @@ def migrate_spamc_config(facts, fileops, backup_func):
     The file is backed up beforehand.
     """
     if facts.spamc_ssl_argument is None:
-        api.current_logger().info('There is nothing to migrate in the spamc configuration file')
+        api.current_logger().info(
+            'There is nothing to migrate in the spamc configuration file'
+        )
         return
     try:
         backup_path = backup_func(SPAMC_CONFIG_FILE)
-        api.current_logger().info('spamc configuration file backup created at %s.'
-                                  % backup_path)
+        api.current_logger().info(
+            'spamc configuration file backup created at %s.' % backup_path
+        )
     except (OSError, IOError) as e:
         api.current_logger().warn(
-            'spamc configuration file migration will not be performed. Failed to create backup: %s' % e)
+            'spamc configuration file migration will not be performed. Failed to create backup: %s'
+            % e
+        )
         return
     try:
         content = fileops.read(SPAMC_CONFIG_FILE)
         new_content = _rewrite_spamc_config(content)
         fileops.write(SPAMC_CONFIG_FILE, new_content)
     except (OSError, IOError) as e:
-        api.current_logger().warn('Failed to migrate spamc configuration file: %s' % e)
+        api.current_logger().warn(
+            'Failed to migrate spamc configuration file: %s' % e
+        )

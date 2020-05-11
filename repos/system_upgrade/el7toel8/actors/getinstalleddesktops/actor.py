@@ -1,7 +1,7 @@
 from leapp.actors import Actor
 from leapp.tags import FactsPhaseTag, IPUWorkflowTag
 from leapp.models import InstalledDesktopsFacts, InstalledRPM
-from leapp.libraries.actor.library import get_installed_desktops
+from leapp.libraries.actor.getinstalleddesktops import get_installed_desktops
 
 
 class GetInstalledDesktops(Actor):
@@ -17,6 +17,9 @@ class GetInstalledDesktops(Actor):
 
     def process(self):
         facts = get_installed_desktops()
-        self.produce(InstalledDesktopsFacts(
-            gnome_installed=facts["gnome_installed"],
-            kde_installed=facts["kde_installed"]))
+        self.produce(
+            InstalledDesktopsFacts(
+                gnome_installed=facts["gnome_installed"],
+                kde_installed=facts["kde_installed"],
+            )
+        )

@@ -1,4 +1,4 @@
-from leapp.libraries.actor import library
+from leapp.libraries.actor import multipathconfread
 from leapp.models import MultipathConfFacts, MultipathConfig, MultipathConfigOption
 from leapp.libraries.stdlib import api
 
@@ -128,7 +128,7 @@ def assert_config(config, expected):
 
 def test_config_dir():
     expected_configs = (default_rhel7_conf, all_devs_conf, empty_conf)
-    facts = library.get_multipath_conf_facts(config_file='tests/files/default_rhel7.conf')
+    facts = multipathconfread.get_multipath_conf_facts(config_file='tests/files/default_rhel7.conf')
     assert facts
     assert len(facts.configs) == 3
     for i in range(len(facts.configs)):
@@ -136,60 +136,60 @@ def test_config_dir():
 
 
 def test_already_rhel8():
-    config = library._parse_config('tests/files/default_rhel8.conf')
+    config = multipathconfread._parse_config('tests/files/default_rhel8.conf')
     assert config
     assert_config(config, default_rhel8_conf)
 
 
 def test_all_the_things():
-    config = library._parse_config('tests/files/all_the_things.conf')
+    config = multipathconfread._parse_config('tests/files/all_the_things.conf')
     assert config
     assert_config(config, all_the_things_conf)
 
 
 def test_already_updated():
-    config = library._parse_config('tests/files/already_updated.conf')
+    config = multipathconfread._parse_config('tests/files/already_updated.conf')
     assert config
     assert_config(config, already_updated_conf)
 
 
 def tests_ugly1():
-    config = library._parse_config('tests/files/ugly1.conf')
+    config = multipathconfread._parse_config('tests/files/ugly1.conf')
     assert config
     assert_config(config, ugly1_conf)
 
 
 def tests_ugly2():
-    config = library._parse_config('tests/files/ugly2.conf')
+    config = multipathconfread._parse_config('tests/files/ugly2.conf')
     assert config
     assert_config(config, ugly2_conf)
 
 
 def tests_just_checker():
-    config = library._parse_config('tests/files/just_checker.conf')
+    config = multipathconfread._parse_config('tests/files/just_checker.conf')
     assert config
     assert_config(config, just_checker_conf)
 
 
 def tests_just_detect():
-    config = library._parse_config('tests/files/just_detect.conf')
+    config = multipathconfread._parse_config('tests/files/just_detect.conf')
     assert config
     assert_config(config, just_detect_conf)
 
 
 def tests_just_reassign():
-    config = library._parse_config('tests/files/just_reassign.conf')
+    config = multipathconfread._parse_config('tests/files/just_reassign.conf')
     assert config
     assert_config(config, just_reassign_conf)
 
 
 def tests_just_exists():
-    config = library._parse_config('tests/files/just_exists.conf')
+    config = multipathconfread._parse_config('tests/files/just_exists.conf')
     assert config
     assert_config(config, just_exists_conf)
 
 
 def tests_just_all_devs():
-    config = library._parse_config('tests/files/just_all_devs.conf')
+    config = multipathconfread._parse_config('tests/files/just_all_devs.conf')
     assert config
     assert_config(config, just_all_devs_conf)
