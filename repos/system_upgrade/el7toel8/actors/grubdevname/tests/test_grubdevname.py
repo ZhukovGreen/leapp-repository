@@ -3,10 +3,9 @@ import os
 import pytest
 
 from leapp.exceptions import StopActorExecution
-from leapp.libraries.stdlib import api, CalledProcessError
-from leapp.libraries.common import testutils
 from leapp.libraries.actor import grubdevname
-
+from leapp.libraries.common import testutils
+from leapp.libraries.stdlib import CalledProcessError, api
 
 BOOT_PARTITION = '/dev/vda1'
 
@@ -15,6 +14,8 @@ BOOT_DEVICE_ENV = '/dev/sda'
 
 VALID_DD = b'GRUB GeomHard DiskRead Error'
 INVALID_DD = b'Nothing here'
+
+CUR_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 def raise_call_error(args=None):
@@ -53,11 +54,15 @@ class RunMocked(object):
 
 
 def open_mocked(fn, flags):
-    return open('tests/valid' if fn == BOOT_DEVICE else 'tests/invalid', 'r')
+    return open(
+        os.path.join(CUR_DIR, 'valid')
+        if fn == BOOT_DEVICE
+        else os.path.join(CUR_DIR, 'invalid'), 'r'
+    )
 
 
 def open_invalid(fn, flags):
-    return open('tests/invalid', 'r')
+    return open(os.path.join(CUR_DIR, 'invalid'), 'r')
 
 
 def read_mocked(f, size):

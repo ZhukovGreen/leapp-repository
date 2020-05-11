@@ -2,15 +2,22 @@ import os
 
 from leapp.libraries.actor import ntp2chrony
 
-NTP_CONF = "tests/data/ntp.conf"
-STEP_TICKERS = "tests/data/step_tickers"
-NTP_MATCH_DIR = "tests/data/ntpconfs/"
-CHRONY_MATCH_DIR = "tests/data/chronyconfs/"
+
+CUR_DIR = os.path.dirname(os.path.abspath(__file__))
+
+NTP_CONF = os.path.join(CUR_DIR, "data/ntp.conf")
+STEP_TICKERS = os.path.join(CUR_DIR, "data/step_tickers")
+
+# TODO [Artem] the following consts should use abs path as well.
+#   reader of [[:digit:]]chrony.conf files does not support wildcards, so we
+#   have to change the working directory here for now.
+NTP_MATCH_DIR = "data/ntpconfs/"
+CHRONY_MATCH_DIR = "data/chronyconfs/"
 
 
 class TestConverter(object):
     def test_basic(self):
-        config = ntp2chrony.NtpConfiguration('', NTP_CONF, step_tickers=STEP_TICKERS)
+        config = ntp2chrony.NtpConfiguration(CUR_DIR, NTP_CONF, step_tickers=STEP_TICKERS)
         present = [config.restrictions, config.driftfile, config.trusted_keys, config.keys,
                    config.step_tickers, config.restrictions]
         for section in present:
@@ -51,6 +58,7 @@ class TestConfigConversion(object):
 
     def test_match(self):
 
+        os.chdir(CUR_DIR)
         for f in [fe for fe in os.listdir(NTP_MATCH_DIR) if fe.endswith('conf')]:
             # get recorded actual result
             num = f.split('.')[0].split('_')[0]

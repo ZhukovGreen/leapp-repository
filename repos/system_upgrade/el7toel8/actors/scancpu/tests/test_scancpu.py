@@ -6,6 +6,9 @@ from leapp.libraries.stdlib import api
 from leapp.models import CPUInfo
 
 
+CUR_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
 class mocked_get_cpuinfo(object):
     def __init__(self, filename):
         self.filename = filename
@@ -16,7 +19,7 @@ class mocked_get_cpuinfo(object):
 
         Those files contain /proc/cpuinfo content from several machines.
         """
-        with open(os.path.join('tests/files', self.filename), 'r') as fp:
+        with open(os.path.join(CUR_DIR, 'files', self.filename), 'r') as fp:
             return fp.readlines()
 
 

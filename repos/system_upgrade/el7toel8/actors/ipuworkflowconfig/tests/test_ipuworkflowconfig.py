@@ -13,6 +13,8 @@ from leapp.libraries.stdlib import CalledProcessError
 from leapp.models import OSRelease
 
 
+CUR_DIR = os.path.dirname(os.path.abspath(__file__))
+
 def _clean_leapp_envs(monkeypatch):
     """
     Clean all LEAPP environment variables before running the test to have
@@ -77,11 +79,13 @@ def test_get_os_release_info(monkeypatch):
         variant_id='server',
     )
     assert expected == ipuworkflowconfig.get_os_release(
-        'tests/files/os-release'
+        os.path.join(CUR_DIR, 'files/os-release')
     )
 
     with pytest.raises(StopActorExecutionError):
-        ipuworkflowconfig.get_os_release('tests/files/non-existent-file')
+        ipuworkflowconfig.get_os_release(
+            os.path.join(CUR_DIR, 'files/non-existent-file')
+        )
 
 
 def test_get_booted_kernel(monkeypatch):
