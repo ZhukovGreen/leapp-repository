@@ -1,8 +1,11 @@
 import os
 
+import pytest
+
 from leapp.snactor.fixture import current_actor_context
 
 
+@pytest.mark.skipif(os.getuid() != 0, reason="User is not a root")
 def test_create_resume_service(current_actor_context):
 
     current_actor_context.run()

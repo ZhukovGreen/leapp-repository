@@ -1,9 +1,12 @@
-import os
 import errno
+import os
+
+import pytest
 
 from leapp.snactor.fixture import current_actor_context
 
 
+@pytest.mark.skipif(os.getuid() != 0, reason="User is not a root")
 def test_remove_resume_service(current_actor_context):
     service_name = 'leapp_resume.service'
     service_path = os.path.join('/etc/systemd/system/', service_name)
