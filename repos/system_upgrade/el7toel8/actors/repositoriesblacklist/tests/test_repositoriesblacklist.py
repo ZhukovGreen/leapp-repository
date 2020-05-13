@@ -105,7 +105,8 @@ def test_with_repo_disabled(monkeypatch):
         repos_files = [RepositoryFile(file='/etc/yum.repos.d/redhat.repo', data=repos_data)]
         yield RepositoriesFacts(repositories=repos_files)
 
-    monkeypatch.setattr(repositoriesblacklist, "_get_list_of_optional_repos", lambda: {'rhel-7-optional-rpms': 'rhel-7'})
+    monkeypatch.setattr(repositoriesblacklist, "_get_list_of_optional_repos",
+                        lambda: {'rhel-7-optional-rpms': 'rhel-7'})
     monkeypatch.setattr(api, "consume", repositories_mock)
     disabled = repositoriesblacklist._get_disabled_optional_repo()
     assert 'rhel-7' in disabled
@@ -117,7 +118,8 @@ def test_with_repo_enabled(monkeypatch):
         repos_files = [RepositoryFile(file='/etc/yum.repos.d/redhat.repo', data=repos_data)]
         yield RepositoriesFacts(repositories=repos_files)
 
-    monkeypatch.setattr(repositoriesblacklist, "_get_list_of_optional_repos", lambda: {'rhel-7-optional-rpms': 'rhel-7'})
+    monkeypatch.setattr(repositoriesblacklist, "_get_list_of_optional_repos",
+                        lambda: {'rhel-7-optional-rpms': 'rhel-7'})
     monkeypatch.setattr(api, "consume", repositories_mock)
     assert not repositoriesblacklist._get_disabled_optional_repo()
 

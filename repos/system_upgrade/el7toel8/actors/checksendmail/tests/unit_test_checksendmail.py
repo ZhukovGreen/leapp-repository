@@ -8,7 +8,7 @@ from leapp.libraries.actor import checksendmail
 
 @pytest.mark.parametrize(
     'test_input,migrate',
-    [('IPv6:::1\n', True), ('IPv6:0:0:0:0:0:0:0:1\n', False),],
+    [('IPv6:::1\n', True), ('IPv6:0:0:0:0:0:0:0:1\n', False), ],
 )
 def test_check_migration(tmpdir, monkeypatch, test_input, migrate):
     test_cfg_path = text_type(tmpdir)

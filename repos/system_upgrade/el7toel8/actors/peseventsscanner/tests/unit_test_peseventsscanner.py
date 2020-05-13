@@ -130,7 +130,8 @@ def test_report_skipped_packages_no_verbose_mode(monkeypatch):
 def test_filter_out_pkgs_in_blacklisted_repos(monkeypatch):
     monkeypatch.setattr(api, 'show_message', show_message_mocked())
     monkeypatch.setattr(reporting, 'create_report', create_report_mocked())
-    monkeypatch.setattr(peseventsscanner, 'get_repositories_blacklisted', get_repos_blacklisted_mocked(set(['blacklisted'])))
+    monkeypatch.setattr(peseventsscanner, 'get_repositories_blacklisted',
+                        get_repos_blacklisted_mocked(set(['blacklisted'])))
     monkeypatch.setenv('LEAPP_VERBOSE', '1')
 
     to_install = {

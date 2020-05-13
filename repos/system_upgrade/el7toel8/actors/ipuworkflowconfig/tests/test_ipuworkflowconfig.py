@@ -15,6 +15,7 @@ from leapp.models import OSRelease
 
 CUR_DIR = os.path.dirname(os.path.abspath(__file__))
 
+
 def _clean_leapp_envs(monkeypatch):
     """
     Clean all LEAPP environment variables before running the test to have
