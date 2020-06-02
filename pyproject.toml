@@ -1,0 +1,62 @@
+[tool.black]
+line_length=79
+target_version=["py38"]
+skip_string_normalization = true
+
+[tool.coverage.run]
+source = ["./repos/"]
+
+[tool.coverage.paths]
+source = ["./repos/"]
+
+[tool.coverage.report]
+fail_under = 95
+skip_covered = true
+show_missing = true
+
+[tool.isort]
+line_length = 79
+use_parentheses = true
+balanced_wrapping = true
+include_trailing_comma = true
+multi_line_output = 3
+known_third_party=["pytest", "distro", "pyudev"]
+#known_first_party=["aiohttp_cache"]
+
+[tool.poetry]
+name = "leapp-repository"
+version = "0.0.1"
+description = ""
+authors = ["ZhukovGreen <zhukovgreen@icloud.com>"]
+
+[tool.poetry.dependencies]
+python = "~2.7 || ^3.6"
+#leapp = {git = "https://github.com/oamg/leapp.git", rev = "b82110fce5e47773e5b7da37ba5af91d426a1a28"}
+leapp = {path = "../leapp", develop = true}
+zipp = {version = "^1.2", python = "~2.7"}
+ipaddress = {version = "^1.0.23", python = "~2.7"}
+distro = "^1.5.0"
+
+[tool.poetry.dev-dependencies]
+coverage = {extras = ["toml"], version = "^5.0.3"}
+pathlib2 = {version = "^2.3", python = "~2.7"}
+pytest = [
+    {version = "^4.6.9", python = "~2.7"},
+    {version = "^5.4", python = "^3.6"}
+]
+pytest-cov = "^2.8.1"
+pyudev = "^0.22.0"
+ipdb = "^0.13.2"
+mock = [
+    {version = "^3.0.5", python = "~2.7"},
+    {version = "^4.0", python = "^3.6"}
+]
+pylint = [
+    {version = "^1.9", python = "~2.7"},
+    {version = "^2.4.4", python = "^3.6"}
+]
+flake8 = "^3.7.9"
+
+[build-system]
+requires = ["poetry>=1.0.0"]
+build-backend = "poetry.masonry.api"
