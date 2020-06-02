@@ -1,0 +1,31 @@
+version: '3.7'
+services:
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      cache_from:
+        - &img_tag leapp-repo
+    image: *img_tag
+    volumes:
+    - ".:/leapp-repository:z"
+    - "../leapp:/leapp:z"
+    command: bash
+  tests_legacy_centos:
+    build:
+      context: .
+      dockerfile: legacy.centos7.Dockerfile
+      cache_from:
+        - &img_tag_legacy-centos leapp-repo-legacy-centos
+    image: *img_tag_legacy-centos
+    volumes:
+    - "../leapp:/leapp:z"
+  tests_legacy_fedora:
+    build:
+      context: .
+      dockerfile: legacy.fedora.Dockerfile
+      cache_from:
+        - &img_tag_legacy-fedora leapp-repo-legacy-fedora
+    image: *img_tag_legacy-fedora
+    volumes:
+      - "../leapp:/leapp:z"
