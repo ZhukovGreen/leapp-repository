@@ -110,3 +110,9 @@ ENV/
 
 # visual studio code configuration
 .vscode
+
+# pycharm
+.idea
+
+# leapp fm
+repos/system_upgrade/el7toel8/.leapp/leapp.db
