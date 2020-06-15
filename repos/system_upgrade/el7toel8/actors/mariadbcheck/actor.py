@@ -3,7 +3,7 @@ from leapp.reporting import Report
 from leapp.models import InstalledRedHatSignedRPM
 from leapp.tags import ChecksPhaseTag, IPUWorkflowTag
 
-from leapp.libraries.actor.library import get_mariadb_packages, generate_report
+from leapp.libraries.actor.mariadbcheck import get_mariadb_packages, generate_report
 
 
 class MariaDbCheck(Actor):
