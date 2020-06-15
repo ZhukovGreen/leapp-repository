@@ -22,5 +22,3 @@ class MariaDbCheck(Actor):
 
         if packages:
             generate_report(packages)
-        
-

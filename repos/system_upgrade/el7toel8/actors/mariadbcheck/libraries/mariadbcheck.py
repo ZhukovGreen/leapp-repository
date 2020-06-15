@@ -7,11 +7,7 @@ from leapp.libraries.stdlib import CalledProcessError, api, run
 def parse_mycnf(config_file):
     """ get used mysql options """
     try:
-        output = run([
-            '/usr/bin/my_print_defaults',
-            '-c', config_file,
-            '--mysqld'
-        ], split=True)['stdout']
+        output = run(['/usr/bin/my_print_defaults', '-c', config_file, '--mysqld'], split=True)['stdout']
     except CalledProcessError:
         api.current_logger().warning('Unable to obtain MySQL local configuration.')
         return None
@@ -31,21 +27,15 @@ def get_plugin_dir(config):
 def get_unsupported_plugins(plugin_dir):
     """ return list of unsupported plugins """
 
-
-    # 103 means mariadb version 10.3 
-    plugins_103 = [
-        'adt_null.so', 'auth_0x0100.so', 'auth_ed25519.so', 'auth_gssapi_client.so',
-        'auth_gssapi.so', 'auth_pam.so', 'auth_socket.so', 'auth_test_plugin.so',
-        'client_ed25519.so', 'debug_key_management.so', 'dialog_examples.so',
-        'dialog.so', 'disks.so', 'example_key_management.so', 'file_key_management.so',
-        'ha_example.so', 'ha_federated.so', 'handlersocket.so', 'ha_spider.so',
-        'ha_test_sql_discovery.so', 'libdaemon_example.so', 'locales.so',
-        'metadata_lock_info.so', 'mypluglib.so', 'mysql_clear_password.so',
-        'qa_auth_client.so', 'qa_auth_interface.so', 'qa_auth_server.so',
-        'query_cache_info.so', 'query_response_time.so', 'remote_io.so',
-        'server_audit.so', 'sha256_password.so', 'simple_password_check.so',
-        'sql_errlog.so', 'test_versioning.so', 'wsrep_info.so',
-        'daemon_example.ini' # TODO what with ini
+    # 103 means mariadb version 10.3
+    plugins_103 = ['adt_null.so', 'auth_0x0100.so', 'auth_ed25519.so', 'auth_gssapi_client.so', 'auth_gssapi.so',
+        'auth_pam.so', 'auth_socket.so', 'auth_test_plugin.so', 'client_ed25519.so', 'debug_key_management.so',
+        'dialog_examples.so', 'dialog.so', 'disks.so', 'example_key_management.so', 'file_key_management.so',
+        'ha_example.so', 'ha_federated.so', 'handlersocket.so', 'ha_spider.so', 'ha_test_sql_discovery.so',
+        'libdaemon_example.so', 'locales.so', 'metadata_lock_info.so', 'mypluglib.so', 'mysql_clear_password.so',
+        'qa_auth_client.so', 'qa_auth_interface.so', 'qa_auth_server.so', 'query_cache_info.so',
+        'query_response_time.so', 'remote_io.so', 'server_audit.so', 'sha256_password.so', 'simple_password_check.so',
+        'sql_errlog.so', 'test_versioning.so', 'wsrep_info.so', 'daemon_example.ini'  # TODO what with ini
     ]
     if not os.path.isdir(plugin_dir):
         # TODO cant check plugins
@@ -57,42 +47,29 @@ def get_unsupported_plugins(plugin_dir):
 
 
 def get_warn_options(used_opts):
-    """ 
-        Return tuple(warn_changed[], warn_renamed{from: to}, warn_removed[]) of config options somehow changed in rhel8
-        https://mariadb.com/kb/en/library/upgrading-from-mariadb-55-to-mariadb-100/#options-that-have-been-removed-or-renamed 
+    """Return tuple(warn_changed[], warn_renamed{from: to}, warn_removed[]) of config options somehow changed in rhel8.
+
+        https://mariadb.com/kb/en/library/upgrading-from-mariadb-55-to-mariadb-100/#options-that-have-been-removed-or-renamed
     """
 
-    options_changed_def = [
-        'aria-sort-buffer-size', 'back_log', 'innodb-buffer-pool-instances',
-        'innodb-concurrency-tickets', 'innodb-log-file-size',
-        'innodb-old-blocks-time', 'innodb-open-files', 
-        'innodb-purge-batch-size', 'innodb-undo-logs',
-        'max-connect-errors', 'max-relay-log-size', 'myisam-sort-buffer-size',
-        'optimizer-switch'
-    ]
-    options_renamed = {
-        'engine-condition-pushdown': 'set optimizer_switch="engine_condition_pushdown=on"',
-        'innodb-fast-checksum': 'innodb-checksum-algorithm',
-        'innodb-flush-neighbor-pages': 'innodb-flush-neighbors',
-        'innodb-stats-auto-update': 'innodb-stats-auto-recalc'
-    }
-    options_not_in_103 = [
-        'innodb-adaptive-flushing-method', 'innodb-autoextend-increment',
-        'innodb-blocking-buffer-pool-restore', 'innodb-buffer-pool-pages',
-        'innodb-buffer-pool-pages-blob', 'innodb-buffer-pool-pages-index',
-        'innodb-buffer-pool-restore-at-startup', 'innodb-buffer-pool-shm-checksum',
-        'innodb-buffer-pool-shm-key', 'innodb-checkpoint-age-target',
-        'innodb-dict-size-limit', 'innodb-doublewrite-file',
-        'innodb-ibuf-accel-rate', 'innodb-ibuf-active-contract',
-        'innodb-ibuf-max-size', 'innodb-import-table-from-xtrabackup',
-        'innodb-index-stats', 'innodb-lazy-drop-table', 
-        'innodb-merge-sort-block-size', 'innodb-persistent-stats-root-page',
-        'innodb-read-ahead', 'innodb-recovery-stats',
-        'innodb-recovery-update-relay-log', 'innodb-stats-update-need-lock',
+    options_changed_def = ['aria-sort-buffer-size', 'back_log', 'innodb-buffer-pool-instances',
+        'innodb-concurrency-tickets', 'innodb-log-file-size', 'innodb-old-blocks-time', 'innodb-open-files',
+        'innodb-purge-batch-size', 'innodb-undo-logs', 'max-connect-errors', 'max-relay-log-size',
+        'myisam-sort-buffer-size', 'optimizer-switch']
+    options_renamed = {'engine-condition-pushdown': 'set optimizer_switch="engine_condition_pushdown=on"',
+        'innodb-fast-checksum': 'innodb-checksum-algorithm', 'innodb-flush-neighbor-pages': 'innodb-flush-neighbors',
+        'innodb-stats-auto-update': 'innodb-stats-auto-recalc'}
+    options_not_in_103 = ['innodb-adaptive-flushing-method', 'innodb-autoextend-increment',
+        'innodb-blocking-buffer-pool-restore', 'innodb-buffer-pool-pages', 'innodb-buffer-pool-pages-blob',
+        'innodb-buffer-pool-pages-index', 'innodb-buffer-pool-restore-at-startup', 'innodb-buffer-pool-shm-checksum',
+        'innodb-buffer-pool-shm-key', 'innodb-checkpoint-age-target', 'innodb-dict-size-limit',
+        'innodb-doublewrite-file', 'innodb-ibuf-accel-rate', 'innodb-ibuf-active-contract', 'innodb-ibuf-max-size',
+        'innodb-import-table-from-xtrabackup', 'innodb-index-stats', 'innodb-lazy-drop-table',
+        'innodb-merge-sort-block-size', 'innodb-persistent-stats-root-page', 'innodb-read-ahead',
+        'innodb-recovery-stats', 'innodb-recovery-update-relay-log', 'innodb-stats-update-need-lock',
         'innodb-sys-stats', 'innodb-table-stats', 'innodb-thread-concurrency-timer-based',
-        'innodb-use-sys-stats-table', 'xtradb-admin-command'
-    ]
-    
+        'innodb-use-sys-stats-table', 'xtradb-admin-command']
+
     warn_changed = []
     warn_renamed = {}
     warn_removed = []
@@ -154,27 +131,20 @@ def generate_report(packages):
             if opts_changed:
                 title = 'MariaDB server changed default values of some options'
                 severity = 'medium'
-                summary = 'Following config options changed default value:\n{}'.format(
-                    ", ".join(opts_changed)
-                )
+                summary = 'Following config options changed default value:\n{}'.format(", ".join(opts_changed))
 
                 reporting.report_generic(title=title, severity=severity, summary=summary)
 
             if opts_renamed:
                 title = 'MariaDB server renamed some options'
                 severity = 'high'
-                summary = 'Following used config options were renamed:\n{}'.format(
-                    ", ".join(opts_renamed)
-                )
+                summary = 'Following used config options were renamed:\n{}'.format(", ".join(opts_renamed))
 
                 reporting.report_generic(title=title, severity=severity, summary=summary)
 
             if opts_removed:
                 title = 'MariaDB server removed some options'
                 severity = 'high'
-                summary = 'Following used config options were removed:\n{}'.format(
-                    ", ".join(opts_removed)
-                )
+                summary = 'Following used config options were removed:\n{}'.format(", ".join(opts_removed))
 
                 reporting.report_generic(title=title, severity=severity, summary=summary)
-
