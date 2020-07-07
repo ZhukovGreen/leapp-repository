@@ -427,6 +427,7 @@ def filter_out_pkgs_in_blacklisted_repos(to_install):
 
     if blacklisted_pkgs:
         # TODO: Describe why they should be installed in the first place (replacement, etc.)
+        import ipdb; ipdb.set_trace()
         report_skipped_packages('The following RHEL 8 packages will not be installed because they are available only'
                                 'repositories which are either disabled or optional. The list of these packages'
                                 ' ({}):'.format(', '.join(blacklisted_repos)),
