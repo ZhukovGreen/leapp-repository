@@ -1,0 +1,50 @@
+import pytest
+
+from leapp.models import (
+    CustomTargetRepository,
+    TargetRepositories,
+    UsedTargetRepositories,
+    UsedTargetRepository,
+)
+from leapp.snactor.fixture import ActorContext
+
+
+@pytest.mark.parametrize(
+    ("baseurl", "exp_msgs_len"),
+    [("file:///root/crb", 1), ("http://localhost/crb", 0)],
+)
+def test_unit_localreposinhibit(current_actor_context, baseurl, exp_msgs_len):
+    """Ensure the Report is generated when local path is used as baseurl.
+
+    :type current_actor_context: ActorContext
+    """
+    current_actor_context.feed(
+        TargetRepositories(
+            custom_repos=[
+                CustomTargetRepository(
+                    baseurl=(
+                        "http://example.com/path/to/repo/BaseOS/x86_64/os/"
+                    ),
+                    repoid="BASEOS",
+                ),
+                CustomTargetRepository(
+                    baseurl=(
+                        "http://example.com/path/to/repo/AppStream/x86_64/os/"
+                    ),
+                    repoid="APPSTREAM",
+                ),
+                CustomTargetRepository(repoid="CRB", baseurl=baseurl),
+            ],
+            rhel_repos=[],
+        )
+    )
+    current_actor_context.feed(
+        UsedTargetRepositories(
+            repos=[
+                UsedTargetRepository(repoid="BASEOS"),
+                UsedTargetRepository(repoid="CRB"),
+            ]
+        )
+    )
+    current_actor_context.run()
+    assert len(current_actor_context.messages()) == exp_msgs_len
