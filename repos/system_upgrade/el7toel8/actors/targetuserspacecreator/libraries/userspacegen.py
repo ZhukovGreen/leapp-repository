@@ -424,7 +424,7 @@ def perform():
             # TODO: this is tmp solution as proper one needs significant refactoring
             # refactorings..
             target_repo_facts = repofileutils.get_parsed_repofiles(context)
-            api.product(TMPTargetRepositoriesFacts(repositories=target_repo_facts))
+            api.produce(TMPTargetRepositoriesFacts(repositories=target_repo_facts))
             # ## fixme ends here
             api.produce(UsedTargetRepositories(
                 repos=[UsedTargetRepository(repoid=repo) for repo in target_repoids]))
